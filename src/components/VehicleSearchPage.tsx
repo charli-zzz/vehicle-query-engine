@@ -2,6 +2,7 @@ import { FilterPanel } from "@/components/FilterPanel";
 import { SearchAndSortBar } from "@/components/SearchAndSortBar";
 import { VehicleResultList } from "@/components/VehicleResultList";
 import { VehicleTypeTabs } from "@/components/VehicleTypeTabs";
+import { vehicles } from "@/lib/vehicles";
 
 export function VehicleSearchPage() {
   return (
@@ -19,12 +20,12 @@ export function VehicleSearchPage() {
           </div>
         </header>
 
-        <VehicleTypeTabs />
         <SearchAndSortBar />
+        <VehicleTypeTabs />
 
         <div className="grid min-h-0 flex-1 gap-6 lg:grid-cols-[280px_1fr]">
           <FilterPanel />
-          <VehicleResultList />
+          <VehicleResultList vehicles={vehicles} />
         </div>
       </div>
     </main>
