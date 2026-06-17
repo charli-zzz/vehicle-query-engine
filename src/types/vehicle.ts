@@ -30,4 +30,12 @@ export type Spaceship = {
 };
 
 export type Vehicle = Car | Bike | Spaceship;
-export type VehicleTab = "all" | "car" | "bike" | "spaceship";
+
+export const vehicleTabs = [
+  { label: "All", value: "all" },
+  { label: "Cars", value: "car" },
+  { label: "Bikes", value: "bike" },
+  { label: "Spaceships", value: "spaceship" },
+] as const;
+
+export type VehicleTab = (typeof vehicleTabs)[number]["value"];
