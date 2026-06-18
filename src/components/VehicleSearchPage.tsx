@@ -1,7 +1,8 @@
 "use client";
 
 import { FilterPanel } from "@/components/FilterPanel";
-import { SearchAndSortBar } from "@/components/SearchAndSortBar";
+import { SearchControl } from "@/components/SearchControl";
+import { SortControl } from "@/components/SortControl";
 import { VehicleResultList } from "@/components/VehicleResultList";
 import { VehicleTypeTabs } from "@/components/VehicleTypeTabs";
 import { getVisibleVehicles } from "@/lib/vehicleQuery";
@@ -30,12 +31,13 @@ export function VehicleSearchPage() {
           </div>
         </header>
 
-        <SearchAndSortBar
-          searchQuery={searchQuery}
-          onSearchQueryChange={setSearchQuery}
-          sortOption={sortOption}
-          onSortOptionChange={setSortOption}
-        />
+        <div className="flex flex-col gap-3 rounded-lg border border-zinc-200 bg-white p-4 shadow-sm sm:flex-row">
+          <SearchControl
+            searchQuery={searchQuery}
+            onSearchQueryChange={setSearchQuery}
+          />
+          <SortControl sortOption={sortOption} onSortOptionChange={setSortOption} />
+        </div>
         <VehicleTypeTabs selectedTab={selectedTab} onSelectTab={setSelectedTab} />
 
         <div className="grid min-h-0 flex-1 gap-6 lg:grid-cols-[280px_1fr]">
