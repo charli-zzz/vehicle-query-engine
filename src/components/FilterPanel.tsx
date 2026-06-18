@@ -30,7 +30,7 @@ export function FilterPanel({
   const rangeFilters = availableFilters.filter((filter) => filter.type === "range");
 
   return (
-    <aside className="flex min-h-0 flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm">
+    <aside className="rounded-lg border border-zinc-200 bg-white shadow-sm lg:sticky lg:top-5 lg:max-h-[calc(100vh-2.5rem)] lg:overflow-y-auto">
       <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-zinc-100 bg-white p-4">
         <h2 className="text-base font-semibold text-zinc-950">Filters</h2>
         <button
@@ -42,7 +42,7 @@ export function FilterPanel({
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 space-y-6 overflow-y-auto p-4">
+      <div className="space-y-6 p-4">
         {availableFilters.length === 0 && (
           <p className="text-sm leading-6 text-zinc-500">
             Select a vehicle type to see filters for that category.
