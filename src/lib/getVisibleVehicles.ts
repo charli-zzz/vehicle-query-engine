@@ -3,10 +3,9 @@ import {
   getVehicleValue,
   type FilterField,
   type SelectedFilters,
-  type VehicleTab,
 } from "@/lib/filterConfig";
 import { sortVehicles, type SortOption } from "@/lib/sortConfig";
-import type { Vehicle } from "@/types/vehicle";
+import type { Vehicle, VehicleTab } from "@/types/vehicle";
 
 // Query pipeline for the visible result list. Every state change re-runs this
 // against the full local dataset so the UI never layers stale intermediate

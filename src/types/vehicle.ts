@@ -30,3 +30,5 @@ export type Spaceship = {
 };
 
 export type Vehicle = Car | Bike | Spaceship;
+export type VehicleKind = Vehicle["kind"];
+export type VehicleTab = "all" | VehicleKind;

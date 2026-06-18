@@ -13,7 +13,7 @@ import {
 } from "@/lib/filterConfig";
 import { getVisibleVehicles } from "@/lib/getVisibleVehicles";
 import type { SortOption } from "@/lib/sortConfig";
-import type { VehicleTab } from "@/lib/filterConfig";
+import type { VehicleTab } from "@/types/vehicle";
 import Image from "next/image";
 import { useState } from "react";
 

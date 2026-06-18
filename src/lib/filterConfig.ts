@@ -1,5 +1,5 @@
 import { bikes, cars, spaceships } from "@/data/loadVehicles";
-import type { Bike, Car, Spaceship, Vehicle } from "@/types/vehicle";
+import type { Bike, Car, Spaceship, Vehicle, VehicleKind, VehicleTab } from "@/types/vehicle";
 
 // Developer-controlled filter configuration. The fields listed here determine
 // which filters appear for each vehicle type; option values and range bounds are
@@ -9,11 +9,7 @@ export const vehicleTabs = [
   { label: "Cars", value: "car" },
   { label: "Bikes", value: "bike" },
   { label: "Spaceships", value: "spaceship" },
-] as const;
-
-export type VehicleTab = (typeof vehicleTabs)[number]["value"];
-
-type VehicleKind = Exclude<VehicleTab, "all">;
+] as const satisfies readonly { label: string; value: VehicleTab }[];
 export type FilterField = keyof Car | keyof Bike | keyof Spaceship;
 export type FilterValue = string | number;
 
