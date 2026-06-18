@@ -1,4 +1,4 @@
-import { vehicleTabs, type VehicleTab } from "@/types/vehicle";
+import { vehicleTabs, type VehicleTab } from "@/lib/vehicleOptions";
 
 type VehicleTypeTabsProps = {
   selectedTab: VehicleTab;
