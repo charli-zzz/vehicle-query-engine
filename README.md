@@ -6,7 +6,7 @@ behavior: vehicle type tabs, search, sorting, and type-specific custom filters.
 
 ## Getting Started
 
-Try the deployed app:
+🚀 Try the deployed app:
 
 [https://vehicle-query-engine-mu.vercel.app/](https://vehicle-query-engine-mu.vercel.app/)
 
@@ -41,7 +41,7 @@ npm run build
 - Sort by model name, newest year, or oldest year.
 - Show custom filters based on the selected vehicle type.
 - Use select filters for discrete values and range sliders for numeric ranges.
-- Keep the filter panel and results list independently scrollable.
+- Use a responsive layout with natural page scrolling and sticky desktop filters.
 
 ## Tech Stack
 
