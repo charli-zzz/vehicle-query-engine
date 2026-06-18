@@ -10,9 +10,10 @@ import { useState } from "react";
 
 export function VehicleSearchPage() {
   const [selectedTab, setSelectedTab] = useState<VehicleTab>("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState<SortOption>("model-asc");
 
-  const visibleVehicles = getVisibleVehicles({ selectedTab, sortOption });
+  const visibleVehicles = getVisibleVehicles({ selectedTab, searchQuery, sortOption });
 
   return (
     <main className="h-screen overflow-hidden bg-zinc-50 px-5 py-6 text-zinc-950 sm:px-8 lg:px-10">
@@ -30,6 +31,8 @@ export function VehicleSearchPage() {
         </header>
 
         <SearchAndSortBar
+          searchQuery={searchQuery}
+          onSearchQueryChange={setSearchQuery}
           sortOption={sortOption}
           onSortOptionChange={setSortOption}
         />

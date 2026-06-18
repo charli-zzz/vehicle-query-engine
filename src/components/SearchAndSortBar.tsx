@@ -1,11 +1,15 @@
 import { sortOptions, type SortOption } from "@/lib/vehicleOptions";
 
 type SearchAndSortBarProps = {
+  searchQuery: string;
+  onSearchQueryChange: (searchQuery: string) => void;
   sortOption: SortOption;
   onSortOptionChange: (sortOption: SortOption) => void;
 };
 
 export function SearchAndSortBar({
+  searchQuery,
+  onSearchQueryChange,
   sortOption,
   onSortOptionChange,
 }: SearchAndSortBarProps) {
@@ -15,8 +19,10 @@ export function SearchAndSortBar({
         Search
         <input
           className="h-11 rounded-md border border-zinc-300 px-3 text-base text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-zinc-950"
-          placeholder="Search model or maker"
+          placeholder="Search any vehicle attribute"
           type="search"
+          value={searchQuery}
+          onChange={(event) => onSearchQueryChange(event.target.value)}
         />
       </label>
 

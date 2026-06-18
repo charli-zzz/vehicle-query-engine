@@ -4,11 +4,24 @@ import type { Vehicle } from "@/types/vehicle";
 
 export type VehicleQueryConstraints = {
   selectedTab: VehicleTab;
+  searchQuery: string;
   sortOption: SortOption;
 };
 
 function matchesVehicleType(vehicle: Vehicle, selectedTab: VehicleTab) {
   return selectedTab === "all" || vehicle.kind === selectedTab;
+}
+
+function matchesSearchQuery(vehicle: Vehicle, searchQuery: string) {
+  const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+
+  if (normalizedSearchQuery === "") {
+    return true;
+  }
+
+  return Object.values(vehicle).some((value) =>
+    String(value).toLowerCase().includes(normalizedSearchQuery),
+  );
 }
 
 function sortVehicles(vehiclesToSort: Vehicle[], sortOption: SortOption) {
@@ -27,9 +40,13 @@ function sortVehicles(vehiclesToSort: Vehicle[], sortOption: SortOption) {
 
 export function getVisibleVehicles({
   selectedTab,
+  searchQuery,
   sortOption,
 }: VehicleQueryConstraints) {
-  const matchingVehicles = vehicles.filter((vehicle) => matchesVehicleType(vehicle, selectedTab));
+  const matchingVehicles = vehicles.filter(
+    (vehicle) =>
+      matchesVehicleType(vehicle, selectedTab) && matchesSearchQuery(vehicle, searchQuery),
+  );
 
   return sortVehicles(matchingVehicles, sortOption);
 }
