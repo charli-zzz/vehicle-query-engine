@@ -30,5 +30,9 @@ export type Spaceship = {
 };
 
 export type Vehicle = Car | Bike | Spaceship;
+
+// Real data category stored on each vehicle record.
 export type VehicleKind = Vehicle["kind"];
-export type VehicleTab = "all" | VehicleKind;
+
+// UI-level result view. "all" is a browsing mode, not a vehicle kind.
+export type VehicleView = "all" | VehicleKind;

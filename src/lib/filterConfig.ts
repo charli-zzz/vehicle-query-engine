@@ -1,15 +1,9 @@
 import { bikes, cars, spaceships } from "@/data/loadVehicles";
-import type { Bike, Car, Spaceship, Vehicle, VehicleKind, VehicleTab } from "@/types/vehicle";
+import type { Bike, Car, Spaceship, Vehicle, VehicleKind } from "@/types/vehicle";
 
 // Developer-controlled filter configuration. The fields listed here determine
 // which filters appear for each vehicle type; option values and range bounds are
 // derived from the local datasets below.
-export const vehicleTabs = [
-  { label: "All", value: "all" },
-  { label: "Cars", value: "car" },
-  { label: "Bikes", value: "bike" },
-  { label: "Spaceships", value: "spaceship" },
-] as const satisfies readonly { label: string; value: VehicleTab }[];
 export type FilterField = keyof Car | keyof Bike | keyof Spaceship;
 export type FilterValue = string | number;
 
@@ -125,13 +119,13 @@ function getRangeBounds(vehiclesForType: Vehicle[], field: FilterField) {
   };
 }
 
-export function getAvailableFilters(selectedTab: VehicleTab): AvailableFilter[] {
-  if (selectedTab === "all") {
+export function getAvailableFilters(selectedVehicleKind?: VehicleKind): AvailableFilter[] {
+  if (selectedVehicleKind === undefined) {
     return [];
   }
 
-  const config = vehicleFilterConfig[selectedTab];
-  const vehiclesForType = vehiclesByKind[selectedTab];
+  const config = vehicleFilterConfig[selectedVehicleKind];
+  const vehiclesForType = vehiclesByKind[selectedVehicleKind];
 
   const selectFilters = config.select.map((field) => ({
     type: "select" as const,

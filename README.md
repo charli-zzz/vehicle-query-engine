@@ -7,7 +7,7 @@ behavior: vehicle type tabs, search, sorting, and type-specific custom filters.
 ## Features
 
 - Browse cars, bikes, and spaceships in one result view.
-- Filter by vehicle type with `All`, `Cars`, `Bikes`, and `Spaceships` tabs.
+- Switch between `All`, `Cars`, `Bikes`, and `Spaceships` result views.
 - Search across all attributes of each vehicle.
 - Sort by model name, newest year, or oldest year.
 - Show custom filters based on the selected vehicle type.
@@ -49,7 +49,7 @@ npm run build
 
 - `src/types/vehicle.ts`: domain types for `Car`, `Bike`, `Spaceship`, and the `Vehicle` union.
 - `src/data/loadVehicles.ts`: loads local JSON data and exports `cars`, `bikes`, `spaceships`, and a combined `vehicles` list.
-- `src/lib/filterConfig.ts`: vehicle tabs, developer-controlled filter configuration, and derived filter options.
+- `src/lib/filterConfig.ts`: developer-controlled filter configuration and derived filter options.
 - `src/lib/sortConfig.ts`: sort options and sorting behavior.
 - `src/lib/getVisibleVehicles.ts`: applies vehicle type, search, custom filters, and sorting.
 - `src/components/VehicleSearchPage.tsx`: page-level state and orchestration.
@@ -67,11 +67,22 @@ type Vehicle = Car | Bike | Spaceship;
 ```
 
 Each record has a `kind` field, so shared UI can work with one result list while
-type-specific rendering and filters still stay explicit.
+type-specific rendering and filters still stay explicit. The app models this
+separately from the selected result view:
+
+```ts
+type VehicleKind = Vehicle["kind"];
+type VehicleView = "all" | VehicleKind;
+```
+
+`VehicleKind` represents real data categories: cars, bikes, and spaceships.
+`VehicleView` represents the UI-level result view. The `all` view is not treated
+as a vehicle type; it means the user has not narrowed the results to one
+vehicle kind.
 
 The page owns UI state:
 
-- selected vehicle type
+- selected vehicle view
 - search query
 - selected filters
 - sort option
@@ -84,7 +95,7 @@ Conceptually:
 
 ```ts
 getVisibleVehicles({
-  selectedTab,
+  selectedVehicleKind,
   searchQuery,
   selectedFilters,
   sortOption,

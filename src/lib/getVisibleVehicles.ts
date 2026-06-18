@@ -5,20 +5,20 @@ import {
   type SelectedFilters,
 } from "@/lib/filterConfig";
 import { sortVehicles, type SortOption } from "@/lib/sortConfig";
-import type { Vehicle, VehicleTab } from "@/types/vehicle";
+import type { Vehicle, VehicleKind } from "@/types/vehicle";
 
 // Query pipeline for the visible result list. Every state change re-runs this
 // against the full local dataset so the UI never layers stale intermediate
 // result sets.
 export type VehicleQueryConstraints = {
-  selectedTab: VehicleTab;
+  selectedVehicleKind?: VehicleKind;
   searchQuery: string;
   selectedFilters: SelectedFilters;
   sortOption: SortOption;
 };
 
-function matchesVehicleType(vehicle: Vehicle, selectedTab: VehicleTab) {
-  return selectedTab === "all" || vehicle.kind === selectedTab;
+function matchesVehicleKind(vehicle: Vehicle, selectedVehicleKind?: VehicleKind) {
+  return selectedVehicleKind === undefined || vehicle.kind === selectedVehicleKind;
 }
 
 function matchesSearchQuery(vehicle: Vehicle, searchQuery: string) {
@@ -67,14 +67,14 @@ function matchesSelectedFilters(vehicle: Vehicle, selectedFilters: SelectedFilte
 }
 
 export function getVisibleVehicles({
-  selectedTab,
+  selectedVehicleKind,
   searchQuery,
   selectedFilters,
   sortOption,
 }: VehicleQueryConstraints) {
   const matchingVehicles = vehicles.filter(
     (vehicle) =>
-      matchesVehicleType(vehicle, selectedTab) &&
+      matchesVehicleKind(vehicle, selectedVehicleKind) &&
       matchesSearchQuery(vehicle, searchQuery) &&
       matchesSelectedFilters(vehicle, selectedFilters),
   );

@@ -13,26 +13,27 @@ import {
 } from "@/lib/filterConfig";
 import { getVisibleVehicles } from "@/lib/getVisibleVehicles";
 import type { SortOption } from "@/lib/sortConfig";
-import type { VehicleTab } from "@/types/vehicle";
+import type { VehicleView } from "@/types/vehicle";
 import Image from "next/image";
 import { useState } from "react";
 
 export function VehicleSearchPage() {
-  const [selectedTab, setSelectedTab] = useState<VehicleTab>("all");
+  const [selectedView, setSelectedView] = useState<VehicleView>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilters, setSelectedFilters] = useState(createEmptySelectedFilters);
   const [sortOption, setSortOption] = useState<SortOption>("model-asc");
 
-  const availableFilters = getAvailableFilters(selectedTab);
+  const selectedVehicleKind = selectedView === "all" ? undefined : selectedView;
+  const availableFilters = getAvailableFilters(selectedVehicleKind);
   const visibleVehicles = getVisibleVehicles({
-    selectedTab,
+    selectedVehicleKind,
     searchQuery,
     selectedFilters,
     sortOption,
   });
 
-  function handleSelectTab(vehicleTab: VehicleTab) {
-    setSelectedTab(vehicleTab);
+  function handleSelectView(vehicleView: VehicleView) {
+    setSelectedView(vehicleView);
     setSelectedFilters(createEmptySelectedFilters());
   }
 
@@ -95,7 +96,7 @@ export function VehicleSearchPage() {
           />
           <SortControl sortOption={sortOption} onSortOptionChange={setSortOption} />
         </div>
-        <VehicleTypeTabs selectedTab={selectedTab} onSelectTab={handleSelectTab} />
+        <VehicleTypeTabs selectedView={selectedView} onSelectView={handleSelectView} />
 
         <div className="grid min-h-0 flex-1 gap-6 lg:grid-cols-[280px_1fr]">
           <FilterPanel
