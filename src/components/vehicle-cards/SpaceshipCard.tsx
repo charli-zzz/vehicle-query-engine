@@ -5,6 +5,12 @@ type SpaceshipCardProps = {
   spaceship: Spaceship;
 };
 
+function formatLightSpeedPercentage(topSpeed: number) {
+  return `${(topSpeed * 100).toLocaleString(undefined, {
+    maximumFractionDigits: 3,
+  })}% light speed`;
+}
+
 export function SpaceshipCard({ spaceship }: SpaceshipCardProps) {
   return (
     <article className="rounded-lg border border-zinc-200 bg-white shadow-sm transition hover:border-zinc-300">
@@ -26,7 +32,7 @@ export function SpaceshipCard({ spaceship }: SpaceshipCardProps) {
           {spaceship.manufacturer} · {spaceship.year}
         </p>
         <p className="mt-4 text-sm font-medium text-zinc-700">
-          {spaceship.max_crew} crew · {spaceship.top_speed}c top speed
+          {spaceship.max_crew} crew · {formatLightSpeedPercentage(spaceship.top_speed)}
         </p>
       </div>
     </article>

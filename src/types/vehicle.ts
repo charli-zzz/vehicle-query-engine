@@ -1,3 +1,4 @@
+/** Vehicle shape loaded from the cars dataset. */
 export type Car = {
   kind: "car";
   colour: string;
@@ -10,6 +11,7 @@ export type Car = {
   year: number;
 };
 
+/** Vehicle shape loaded from the bikes dataset. */
 export type Bike = {
   kind: "bike";
   brand: string;
@@ -20,6 +22,7 @@ export type Bike = {
   year: number;
 };
 
+/** Vehicle shape loaded from the spaceships dataset. */
 export type Spaceship = {
   kind: "spaceship";
   manufacturer: string;
@@ -29,4 +32,11 @@ export type Spaceship = {
   year: number;
 };
 
+/** Union type for rendering and querying the mixed result list. */
 export type Vehicle = Car | Bike | Spaceship;
+
+/** Real data category stored on each vehicle record. */
+export type VehicleKind = Vehicle["kind"];
+
+/** UI-level result view. "all" is a browsing mode, not a vehicle kind. */
+export type VehicleView = "all" | VehicleKind;

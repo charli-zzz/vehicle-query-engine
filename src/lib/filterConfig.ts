@@ -1,11 +1,16 @@
-import type { VehicleTab } from "@/lib/vehicleOptions";
-import { vehicles } from "@/lib/vehicles";
-import type { Bike, Car, Spaceship, Vehicle } from "@/types/vehicle";
+import { bikes, cars, spaceships } from "@/data/loadVehicles";
+import type { Bike, Car, Spaceship, Vehicle, VehicleKind } from "@/types/vehicle";
 
-type VehicleKind = Exclude<VehicleTab, "all">;
+/**
+ * Field names that can participate in configured select or range filters.
+ * The config below decides which fields are actually available per kind.
+ */
 export type FilterField = keyof Car | keyof Bike | keyof Spaceship;
+
+/** Primitive values supported by select filters and generic vehicle lookups. */
 export type FilterValue = string | number;
 
+/** Discrete option filter derived from a configured field. */
 export type SelectFilter = {
   type: "select";
   field: FilterField;
@@ -13,6 +18,7 @@ export type SelectFilter = {
   options: FilterValue[];
 };
 
+/** Numeric range filter derived from a configured field. */
 export type RangeFilter = {
   type: "range";
   field: FilterField;
@@ -22,8 +28,10 @@ export type RangeFilter = {
   step: number;
 };
 
+/** Filter definitions rendered by the filter panel for the selected kind. */
 export type AvailableFilter = SelectFilter | RangeFilter;
 
+/** User-selected select and range constraints keyed by vehicle field. */
 export type SelectedFilters = {
   select: Partial<Record<FilterField, FilterValue[]>>;
   range: Partial<Record<FilterField, { min?: number; max?: number }>>;
@@ -44,6 +52,14 @@ const vehicleFilterConfig = {
   },
 } satisfies Record<VehicleKind, { select: FilterField[]; range: FilterField[] }>;
 
+// Keep filter derivation tied to the original datasets instead of filtering the
+// combined All list. This preserves type-specific filter behavior.
+const vehiclesByKind = {
+  car: cars,
+  bike: bikes,
+  spaceship: spaceships,
+} satisfies Record<VehicleKind, Vehicle[]>;
+
 const filterLabels: Partial<Record<FilterField, string>> = {
   brand: "Brand",
   engine_size: "Engine size",
@@ -59,6 +75,9 @@ const filterLabels: Partial<Record<FilterField, string>> = {
   year: "Year",
 };
 
+/**
+ * Creates the empty selected-filter state used by the page and clear action.
+ */
 export function createEmptySelectedFilters(): SelectedFilters {
   return {
     select: {},
@@ -70,6 +89,9 @@ function getFilterLabel(field: FilterField) {
   return filterLabels[field] ?? String(field);
 }
 
+/**
+ * Reads a configured field from a vehicle in the mixed union.
+ */
 export function getVehicleValue(vehicle: Vehicle, field: FilterField) {
   return (vehicle as unknown as Record<FilterField, FilterValue>)[field];
 }
@@ -94,6 +116,13 @@ function getDecimalPlaceCount(value: number) {
   return decimalValue?.length ?? 0;
 }
 
+/**
+ * Rounds slider values to the precision implied by the configured step.
+ */
+export function normalizeFilterRangeValue(value: number, step: number) {
+  return Number(value.toFixed(getDecimalPlaceCount(step)));
+}
+
 function getRangeBounds(vehiclesForType: Vehicle[], field: FilterField) {
   const values = vehiclesForType.map((vehicle) => Number(getVehicleValue(vehicle, field)));
   const maxDecimalPlaces = Math.max(...values.map(getDecimalPlaceCount));
@@ -106,13 +135,17 @@ function getRangeBounds(vehiclesForType: Vehicle[], field: FilterField) {
   };
 }
 
-export function getAvailableFilters(selectedTab: VehicleTab): AvailableFilter[] {
-  if (selectedTab === "all") {
+/**
+ * Returns filter definitions for a real vehicle kind. Passing undefined means
+ * the All view is active, so no type-specific filters are available.
+ */
+export function getAvailableFilters(selectedVehicleKind?: VehicleKind): AvailableFilter[] {
+  if (selectedVehicleKind === undefined) {
     return [];
   }
 
-  const config = vehicleFilterConfig[selectedTab];
-  const vehiclesForType = vehicles.filter((vehicle) => vehicle.kind === selectedTab);
+  const config = vehicleFilterConfig[selectedVehicleKind];
+  const vehiclesForType = vehiclesByKind[selectedVehicleKind];
 
   const selectFilters = config.select.map((field) => ({
     type: "select" as const,

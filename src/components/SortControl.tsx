@@ -1,4 +1,4 @@
-import { sortOptions, type SortOption } from "@/lib/vehicleOptions";
+import { sortOptions, type SortOption } from "@/lib/sortConfig";
 
 type SortControlProps = {
   sortOption: SortOption;

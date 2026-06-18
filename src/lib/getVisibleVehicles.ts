@@ -1,21 +1,24 @@
+import { vehicles } from "@/data/loadVehicles";
 import {
   getVehicleValue,
   type FilterField,
   type SelectedFilters,
-} from "@/lib/vehicleFilters";
-import type { SortOption, VehicleTab } from "@/lib/vehicleOptions";
-import { vehicles } from "@/lib/vehicles";
-import type { Vehicle } from "@/types/vehicle";
+} from "@/lib/filterConfig";
+import { sortVehicles, type SortOption } from "@/lib/sortConfig";
+import type { Vehicle, VehicleKind } from "@/types/vehicle";
+
 
 export type VehicleQueryConstraints = {
-  selectedTab: VehicleTab;
+  // `selectedVehicleKind` is optional because the All view does not select a
+  //  specific vehicle kind.
+  selectedVehicleKind?: VehicleKind;
   searchQuery: string;
   selectedFilters: SelectedFilters;
   sortOption: SortOption;
 };
 
-function matchesVehicleType(vehicle: Vehicle, selectedTab: VehicleTab) {
-  return selectedTab === "all" || vehicle.kind === selectedTab;
+function matchesVehicleKind(vehicle: Vehicle, selectedVehicleKind?: VehicleKind) {
+  return selectedVehicleKind === undefined || vehicle.kind === selectedVehicleKind;
 }
 
 function matchesSearchQuery(vehicle: Vehicle, searchQuery: string) {
@@ -25,6 +28,7 @@ function matchesSearchQuery(vehicle: Vehicle, searchQuery: string) {
     return true;
   }
 
+  // Search is intentionally generic rather than config-driven
   return Object.values(vehicle).some((value) =>
     String(value).toLowerCase().includes(normalizedSearchQuery),
   );
@@ -61,29 +65,20 @@ function matchesSelectedFilters(vehicle: Vehicle, selectedFilters: SelectedFilte
   );
 }
 
-function sortVehicles(vehiclesToSort: Vehicle[], sortOption: SortOption) {
-  return [...vehiclesToSort].sort((firstVehicle, secondVehicle) => {
-    if (sortOption === "year-desc") {
-      return secondVehicle.year - firstVehicle.year;
-    }
-
-    if (sortOption === "year-asc") {
-      return firstVehicle.year - secondVehicle.year;
-    }
-
-    return firstVehicle.model.localeCompare(secondVehicle.model);
-  });
-}
-
+/**
+ * Builds the visible vehicles from the full local dataset every time query
+ * state changes. Kind, search, and custom filters decide which vehicles are
+ * included; sorting is then applied as the final ordering step.
+ */
 export function getVisibleVehicles({
-  selectedTab,
+  selectedVehicleKind,
   searchQuery,
   selectedFilters,
   sortOption,
 }: VehicleQueryConstraints) {
   const matchingVehicles = vehicles.filter(
     (vehicle) =>
-      matchesVehicleType(vehicle, selectedTab) &&
+      matchesVehicleKind(vehicle, selectedVehicleKind) &&
       matchesSearchQuery(vehicle, searchQuery) &&
       matchesSelectedFilters(vehicle, selectedFilters),
   );
