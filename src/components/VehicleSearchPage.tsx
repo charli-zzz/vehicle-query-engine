@@ -5,6 +5,12 @@ import { SearchControl } from "@/components/SearchControl";
 import { SortControl } from "@/components/SortControl";
 import { VehicleResultList } from "@/components/VehicleResultList";
 import { VehicleTypeTabs } from "@/components/VehicleTypeTabs";
+import {
+  createEmptySelectedFilters,
+  getAvailableFilters,
+  type FilterField,
+  type FilterValue,
+} from "@/lib/vehicleFilters";
 import { getVisibleVehicles } from "@/lib/vehicleQuery";
 import type { SortOption, VehicleTab } from "@/lib/vehicleOptions";
 import { useState } from "react";
@@ -12,9 +18,48 @@ import { useState } from "react";
 export function VehicleSearchPage() {
   const [selectedTab, setSelectedTab] = useState<VehicleTab>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFilters, setSelectedFilters] = useState(createEmptySelectedFilters);
   const [sortOption, setSortOption] = useState<SortOption>("model-asc");
 
-  const visibleVehicles = getVisibleVehicles({ selectedTab, searchQuery, sortOption });
+  const availableFilters = getAvailableFilters(selectedTab);
+  const visibleVehicles = getVisibleVehicles({
+    selectedTab,
+    searchQuery,
+    selectedFilters,
+    sortOption,
+  });
+
+  function handleSelectTab(vehicleTab: VehicleTab) {
+    setSelectedTab(vehicleTab);
+    setSelectedFilters(createEmptySelectedFilters());
+  }
+
+  function handleSelectFilterChange(field: FilterField, value: FilterValue) {
+    setSelectedFilters((currentFilters) => {
+      const currentValues = currentFilters.select[field] ?? [];
+      const nextValues = currentValues.includes(value)
+        ? currentValues.filter((currentValue) => currentValue !== value)
+        : [...currentValues, value];
+
+      return {
+        ...currentFilters,
+        select: {
+          ...currentFilters.select,
+          [field]: nextValues,
+        },
+      };
+    });
+  }
+
+  function handleRangeFilterChange(field: FilterField, range: { min: number; max: number }) {
+    setSelectedFilters((currentFilters) => ({
+      ...currentFilters,
+      range: {
+        ...currentFilters.range,
+        [field]: range,
+      },
+    }));
+  }
 
   return (
     <main className="h-screen overflow-hidden bg-zinc-50 px-5 py-6 text-zinc-950 sm:px-8 lg:px-10">
@@ -38,10 +83,16 @@ export function VehicleSearchPage() {
           />
           <SortControl sortOption={sortOption} onSortOptionChange={setSortOption} />
         </div>
-        <VehicleTypeTabs selectedTab={selectedTab} onSelectTab={setSelectedTab} />
+        <VehicleTypeTabs selectedTab={selectedTab} onSelectTab={handleSelectTab} />
 
         <div className="grid min-h-0 flex-1 gap-6 lg:grid-cols-[280px_1fr]">
-          <FilterPanel />
+          <FilterPanel
+            availableFilters={availableFilters}
+            selectedFilters={selectedFilters}
+            onClearFilters={() => setSelectedFilters(createEmptySelectedFilters())}
+            onRangeFilterChange={handleRangeFilterChange}
+            onSelectFilterChange={handleSelectFilterChange}
+          />
           <VehicleResultList vehicles={visibleVehicles} />
         </div>
       </div>
