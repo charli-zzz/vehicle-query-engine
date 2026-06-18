@@ -1,10 +1,11 @@
 import * as Slider from "@radix-ui/react-slider";
-import type {
-  AvailableFilter,
-  FilterField,
-  FilterValue,
-  SelectedFilters,
-} from "@/lib/vehicleFilters";
+import {
+  normalizeFilterRangeValue,
+  type AvailableFilter,
+  type FilterField,
+  type FilterValue,
+  type SelectedFilters,
+} from "@/lib/filterConfig";
 
 type FilterPanelProps = {
   availableFilters: AvailableFilter[];
@@ -23,18 +24,6 @@ export function FilterPanel({
 }: FilterPanelProps) {
   const selectFilters = availableFilters.filter((filter) => filter.type === "select");
   const rangeFilters = availableFilters.filter((filter) => filter.type === "range");
-
-  function getStepDecimalPlaceCount(step: number) {
-    const decimalValue = step.toString().split(".")[1];
-
-    return decimalValue?.length ?? 0;
-  }
-
-  function normalizeRangeValue(value: number, step: number) {
-    const decimalPlaceCount = getStepDecimalPlaceCount(step);
-
-    return Number(value.toFixed(decimalPlaceCount));
-  }
 
   return (
     <aside className="flex min-h-0 flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm">
@@ -100,8 +89,8 @@ export function FilterPanel({
                 value={[selectedMin, selectedMax]}
                 onValueChange={([nextMin, nextMax]) =>
                   onRangeFilterChange(filter.field, {
-                    min: normalizeRangeValue(nextMin, filter.step),
-                    max: normalizeRangeValue(nextMax, filter.step),
+                    min: normalizeFilterRangeValue(nextMin, filter.step),
+                    max: normalizeFilterRangeValue(nextMax, filter.step),
                   })
                 }
               >

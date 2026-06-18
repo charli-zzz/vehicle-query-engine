@@ -1,12 +1,16 @@
+import { vehicles } from "@/data/loadVehicles";
 import {
   getVehicleValue,
   type FilterField,
   type SelectedFilters,
-} from "@/lib/vehicleFilters";
-import type { SortOption, VehicleTab } from "@/lib/vehicleOptions";
-import { vehicles } from "@/lib/vehicles";
+  type VehicleTab,
+} from "@/lib/filterConfig";
+import { sortVehicles, type SortOption } from "@/lib/sortConfig";
 import type { Vehicle } from "@/types/vehicle";
 
+// Query pipeline for the visible result list. Every state change re-runs this
+// against the full local dataset so the UI never layers stale intermediate
+// result sets.
 export type VehicleQueryConstraints = {
   selectedTab: VehicleTab;
   searchQuery: string;
@@ -25,6 +29,8 @@ function matchesSearchQuery(vehicle: Vehicle, searchQuery: string) {
     return true;
   }
 
+  // Search is intentionally generic rather than config-driven: the contract
+  // requires searching across every attribute for each vehicle.
   return Object.values(vehicle).some((value) =>
     String(value).toLowerCase().includes(normalizedSearchQuery),
   );
@@ -59,20 +65,6 @@ function matchesSelectedFilters(vehicle: Vehicle, selectedFilters: SelectedFilte
     matchesSelectFilters(vehicle, selectedFilters) &&
     matchesRangeFilters(vehicle, selectedFilters)
   );
-}
-
-function sortVehicles(vehiclesToSort: Vehicle[], sortOption: SortOption) {
-  return [...vehiclesToSort].sort((firstVehicle, secondVehicle) => {
-    if (sortOption === "year-desc") {
-      return secondVehicle.year - firstVehicle.year;
-    }
-
-    if (sortOption === "year-asc") {
-      return firstVehicle.year - secondVehicle.year;
-    }
-
-    return firstVehicle.model.localeCompare(secondVehicle.model);
-  });
 }
 
 export function getVisibleVehicles({

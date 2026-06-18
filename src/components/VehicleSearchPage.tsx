@@ -10,9 +10,10 @@ import {
   getAvailableFilters,
   type FilterField,
   type FilterValue,
-} from "@/lib/vehicleFilters";
-import { getVisibleVehicles } from "@/lib/vehicleQuery";
-import type { SortOption, VehicleTab } from "@/lib/vehicleOptions";
+} from "@/lib/filterConfig";
+import { getVisibleVehicles } from "@/lib/getVisibleVehicles";
+import type { SortOption } from "@/lib/sortConfig";
+import type { VehicleTab } from "@/lib/filterConfig";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -32,7 +33,6 @@ export function VehicleSearchPage() {
 
   function handleSelectTab(vehicleTab: VehicleTab) {
     setSelectedTab(vehicleTab);
-    // switching tabs should clear specific filters for the previous tab
     setSelectedFilters(createEmptySelectedFilters());
   }
 

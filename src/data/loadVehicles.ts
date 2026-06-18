@@ -3,17 +3,19 @@ import carsRawData from "../../data/cars.json";
 import spaceshipsRawData from "../../data/spaceships.json";
 import type { Bike, Car, Spaceship, Vehicle } from "@/types/vehicle";
 
-const cars = carsRawData.slice(1).map((car) => ({
+// Loads the static JSON datasets and adds a discriminating `kind` field so the
+// UI can render one mixed result list without losing type-specific behavior.
+export const cars = carsRawData.slice(1).map((car) => ({
   ...car,
   kind: "car" as const,
 })) as Car[];
 
-const bikes = bikesRawData.slice(1).map((bike) => ({
+export const bikes = bikesRawData.slice(1).map((bike) => ({
   ...bike,
   kind: "bike" as const,
 })) as Bike[];
 
-const spaceships = spaceshipsRawData.slice(1).map((spaceship) => ({
+export const spaceships = spaceshipsRawData.slice(1).map((spaceship) => ({
   ...spaceship,
   kind: "spaceship" as const,
 })) as Spaceship[];

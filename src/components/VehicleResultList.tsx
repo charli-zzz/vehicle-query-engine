@@ -1,7 +1,7 @@
 import type { Vehicle } from "@/types/vehicle";
-import { BikeCard } from "@/components/BikeCard";
-import { CarCard } from "@/components/CarCard";
-import { SpaceshipCard } from "@/components/SpaceshipCard";
+import { BikeCard } from "@/components/vehicle-cards/BikeCard";
+import { CarCard } from "@/components/vehicle-cards/CarCard";
+import { SpaceshipCard } from "@/components/vehicle-cards/SpaceshipCard";
 
 type VehicleResultListProps = {
   vehicles: Vehicle[];

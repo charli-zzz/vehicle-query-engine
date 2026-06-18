@@ -1,6 +1,17 @@
-import type { VehicleTab } from "@/lib/vehicleOptions";
-import { vehicles } from "@/lib/vehicles";
+import { bikes, cars, spaceships } from "@/data/loadVehicles";
 import type { Bike, Car, Spaceship, Vehicle } from "@/types/vehicle";
+
+// Developer-controlled filter configuration. The fields listed here determine
+// which filters appear for each vehicle type; option values and range bounds are
+// derived from the local datasets below.
+export const vehicleTabs = [
+  { label: "All", value: "all" },
+  { label: "Cars", value: "car" },
+  { label: "Bikes", value: "bike" },
+  { label: "Spaceships", value: "spaceship" },
+] as const;
+
+export type VehicleTab = (typeof vehicleTabs)[number]["value"];
 
 type VehicleKind = Exclude<VehicleTab, "all">;
 export type FilterField = keyof Car | keyof Bike | keyof Spaceship;
@@ -43,6 +54,14 @@ const vehicleFilterConfig = {
     range: ["top_speed", "year"],
   },
 } satisfies Record<VehicleKind, { select: FilterField[]; range: FilterField[] }>;
+
+// Keep filter derivation tied to the original datasets instead of filtering the
+// combined All list. This preserves type-specific filter behavior.
+const vehiclesByKind = {
+  car: cars,
+  bike: bikes,
+  spaceship: spaceships,
+} satisfies Record<VehicleKind, Vehicle[]>;
 
 const filterLabels: Partial<Record<FilterField, string>> = {
   brand: "Brand",
@@ -94,6 +113,10 @@ function getDecimalPlaceCount(value: number) {
   return decimalValue?.length ?? 0;
 }
 
+export function normalizeFilterRangeValue(value: number, step: number) {
+  return Number(value.toFixed(getDecimalPlaceCount(step)));
+}
+
 function getRangeBounds(vehiclesForType: Vehicle[], field: FilterField) {
   const values = vehiclesForType.map((vehicle) => Number(getVehicleValue(vehicle, field)));
   const maxDecimalPlaces = Math.max(...values.map(getDecimalPlaceCount));
@@ -112,7 +135,7 @@ export function getAvailableFilters(selectedTab: VehicleTab): AvailableFilter[] 
   }
 
   const config = vehicleFilterConfig[selectedTab];
-  const vehiclesForType = vehicles.filter((vehicle) => vehicle.kind === selectedTab);
+  const vehiclesForType = vehiclesByKind[selectedTab];
 
   const selectFilters = config.select.map((field) => ({
     type: "select" as const,

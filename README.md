@@ -48,18 +48,19 @@ npm run build
 ## Project Structure
 
 - `src/types/vehicle.ts`: domain types for `Car`, `Bike`, `Spaceship`, and the `Vehicle` union.
-- `src/lib/vehicles.ts`: loads the JSON datasets and combines them into one `vehicles` array.
-- `src/lib/vehicleOptions.ts`: UI option lists for vehicle tabs and sorting.
-- `src/lib/vehicleFilters.ts`: developer-controlled filter configuration and derived filter options.
-- `src/lib/vehicleQuery.ts`: applies vehicle type, search, custom filters, and sorting.
+- `src/data/loadVehicles.ts`: loads local JSON data and exports `cars`, `bikes`, `spaceships`, and a combined `vehicles` list.
+- `src/lib/filterConfig.ts`: vehicle tabs, developer-controlled filter configuration, and derived filter options.
+- `src/lib/sortConfig.ts`: sort options and sorting behavior.
+- `src/lib/getVisibleVehicles.ts`: applies vehicle type, search, custom filters, and sorting.
 - `src/components/VehicleSearchPage.tsx`: page-level state and orchestration.
 - `src/components/FilterPanel.tsx`: custom filter UI.
 - `src/components/VehicleResultList.tsx`: result rendering.
 
 ## Architecture Notes
 
-The app intentionally combines all vehicle records into a single discriminated
-union:
+The app keeps the source datasets available separately as `cars`, `bikes`, and
+`spaceships`, while also exposing a combined `vehicles` list for the shared All
+view and result rendering. The combined list is typed as a discriminated union:
 
 ```ts
 type Vehicle = Car | Bike | Spaceship;
@@ -75,7 +76,7 @@ The page owns UI state:
 - selected filters
 - sort option
 
-The query logic lives in `src/lib/vehicleQuery.ts`. Every time state changes,
+The query logic lives in `src/lib/getVisibleVehicles.ts`. Every time state changes,
 the app recalculates visible vehicles from the full dataset instead of layering
 stateful intermediate result lists.
 
@@ -110,20 +111,21 @@ from the dataset.
 
 ## Frontend vs Backend Querying
 
-This project keeps filtering, searching, and sorting in the frontend because the
-dataset is local and small. That is intentional: it showcases frontend skills
-such as controlled inputs, derived state, type-specific UI, discriminated unions,
-and reusable query logic.
+This project intentionally uses local JSON data only. Filtering, searching, and
+sorting stay in the frontend because the dataset is static and small. That
+showcases frontend skills such as controlled inputs, derived state,
+type-specific UI, discriminated unions, and reusable query logic without adding
+unnecessary backend complexity.
 
-At production scale, the same constraints would usually move to the backend.
-The frontend would still own UI state, but it would send those constraints to an
-API:
+At production scale, the same constraints could move to a backend or search
+service. That is not part of this implementation, but the frontend state shape
+would map naturally to an API request:
 
 ```txt
 GET /api/vehicles?type=car&search=astro&yearMin=2020&sort=year-desc&page=1
 ```
 
-The backend would then handle:
+In that production-style version, the backend would handle:
 
 - filtering
 - searching
