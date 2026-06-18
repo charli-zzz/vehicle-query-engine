@@ -4,32 +4,15 @@ import { FilterPanel } from "@/components/FilterPanel";
 import { SearchAndSortBar } from "@/components/SearchAndSortBar";
 import { VehicleResultList } from "@/components/VehicleResultList";
 import { VehicleTypeTabs } from "@/components/VehicleTypeTabs";
+import { getVisibleVehicles } from "@/lib/vehicleQuery";
 import type { SortOption, VehicleTab } from "@/lib/vehicleOptions";
-import { vehicles } from "@/lib/vehicles";
-import type { Vehicle } from "@/types/vehicle";
 import { useState } from "react";
-
-function sortVehicles(vehiclesToSort: Vehicle[], sortOption: SortOption) {
-  return [...vehiclesToSort].sort((firstVehicle, secondVehicle) => {
-    if (sortOption === "year-desc") {
-      return secondVehicle.year - firstVehicle.year;
-    }
-
-    if (sortOption === "year-asc") {
-      return firstVehicle.year - secondVehicle.year;
-    }
-
-    return firstVehicle.model.localeCompare(secondVehicle.model);
-  });
-}
 
 export function VehicleSearchPage() {
   const [selectedTab, setSelectedTab] = useState<VehicleTab>("all");
   const [sortOption, setSortOption] = useState<SortOption>("model-asc");
 
-  const filteredVehicles =
-    selectedTab === "all" ? vehicles : vehicles.filter((vehicle) => vehicle.kind === selectedTab);
-  const visibleVehicles = sortVehicles(filteredVehicles, sortOption);
+  const visibleVehicles = getVisibleVehicles({ selectedTab, sortOption });
 
   return (
     <main className="h-screen overflow-hidden bg-zinc-50 px-5 py-6 text-zinc-950 sm:px-8 lg:px-10">
