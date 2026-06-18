@@ -15,6 +15,10 @@ type FilterPanelProps = {
   onSelectFilterChange: (field: FilterField, value: FilterValue) => void;
 };
 
+/**
+ * Renders the type-specific filter controls derived from the selected vehicle
+ * kind and reports user selections back to the page state.
+ */
 export function FilterPanel({
   availableFilters,
   selectedFilters,

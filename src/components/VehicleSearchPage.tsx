@@ -17,6 +17,10 @@ import type { VehicleView } from "@/types/vehicle";
 import Image from "next/image";
 import { useState } from "react";
 
+/**
+ * Owns the vehicle query UI state and coordinates search, sort, kind selection,
+ * filter selection, and result rendering.
+ */
 export function VehicleSearchPage() {
   const [selectedView, setSelectedView] = useState<VehicleView>("all");
   const [searchQuery, setSearchQuery] = useState("");

@@ -1,12 +1,16 @@
 import { bikes, cars, spaceships } from "@/data/loadVehicles";
 import type { Bike, Car, Spaceship, Vehicle, VehicleKind } from "@/types/vehicle";
 
-// Developer-controlled filter configuration. The fields listed here determine
-// which filters appear for each vehicle type; option values and range bounds are
-// derived from the local datasets below.
+/**
+ * Field names that can participate in configured select or range filters.
+ * The config below decides which fields are actually available per kind.
+ */
 export type FilterField = keyof Car | keyof Bike | keyof Spaceship;
+
+/** Primitive values supported by select filters and generic vehicle lookups. */
 export type FilterValue = string | number;
 
+/** Discrete option filter derived from a configured field. */
 export type SelectFilter = {
   type: "select";
   field: FilterField;
@@ -14,6 +18,7 @@ export type SelectFilter = {
   options: FilterValue[];
 };
 
+/** Numeric range filter derived from a configured field. */
 export type RangeFilter = {
   type: "range";
   field: FilterField;
@@ -23,8 +28,10 @@ export type RangeFilter = {
   step: number;
 };
 
+/** Filter definitions rendered by the filter panel for the selected kind. */
 export type AvailableFilter = SelectFilter | RangeFilter;
 
+/** User-selected select and range constraints keyed by vehicle field. */
 export type SelectedFilters = {
   select: Partial<Record<FilterField, FilterValue[]>>;
   range: Partial<Record<FilterField, { min?: number; max?: number }>>;
@@ -68,6 +75,9 @@ const filterLabels: Partial<Record<FilterField, string>> = {
   year: "Year",
 };
 
+/**
+ * Creates the empty selected-filter state used by the page and clear action.
+ */
 export function createEmptySelectedFilters(): SelectedFilters {
   return {
     select: {},
@@ -79,6 +89,9 @@ function getFilterLabel(field: FilterField) {
   return filterLabels[field] ?? String(field);
 }
 
+/**
+ * Reads a configured field from a vehicle in the mixed union.
+ */
 export function getVehicleValue(vehicle: Vehicle, field: FilterField) {
   return (vehicle as unknown as Record<FilterField, FilterValue>)[field];
 }
@@ -103,6 +116,9 @@ function getDecimalPlaceCount(value: number) {
   return decimalValue?.length ?? 0;
 }
 
+/**
+ * Rounds slider values to the precision implied by the configured step.
+ */
 export function normalizeFilterRangeValue(value: number, step: number) {
   return Number(value.toFixed(getDecimalPlaceCount(step)));
 }
@@ -119,6 +135,10 @@ function getRangeBounds(vehiclesForType: Vehicle[], field: FilterField) {
   };
 }
 
+/**
+ * Returns filter definitions for a real vehicle kind. Passing undefined means
+ * the All view is active, so no type-specific filters are available.
+ */
 export function getAvailableFilters(selectedVehicleKind?: VehicleKind): AvailableFilter[] {
   if (selectedVehicleKind === undefined) {
     return [];

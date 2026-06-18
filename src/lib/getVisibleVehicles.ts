@@ -7,9 +7,11 @@ import {
 import { sortVehicles, type SortOption } from "@/lib/sortConfig";
 import type { Vehicle, VehicleKind } from "@/types/vehicle";
 
-// Query pipeline for the visible result list. Every state change re-runs this
-// against the full local dataset so the UI never layers stale intermediate
-// result sets.
+/**
+ * Constraints applied to the full local dataset to produce the visible results.
+ * Callers pass query constraints, not UI view names; undefined
+ * selectedVehicleKind means no kind restriction.
+ */
 export type VehicleQueryConstraints = {
   selectedVehicleKind?: VehicleKind;
   searchQuery: string;
@@ -66,6 +68,10 @@ function matchesSelectedFilters(vehicle: Vehicle, selectedFilters: SelectedFilte
   );
 }
 
+/**
+ * Applies kind, search, custom filters, and sort to the full local dataset.
+ * This avoids layering stale intermediate result arrays in React state.
+ */
 export function getVisibleVehicles({
   selectedVehicleKind,
   searchQuery,

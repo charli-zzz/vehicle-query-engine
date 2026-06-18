@@ -7,6 +7,10 @@ type VehicleResultListProps = {
   vehicles: Vehicle[];
 };
 
+/**
+ * Renders the mixed vehicle result list and delegates each item to its
+ * kind-specific card component.
+ */
 export function VehicleResultList({ vehicles }: VehicleResultListProps) {
   return (
     <section className="flex min-h-0 flex-col gap-4">
