@@ -59,8 +59,10 @@ npm run build
 ## Architecture Notes
 
 The app keeps the source datasets available separately as `cars`, `bikes`, and
-`spaceships`, while also exposing a combined `vehicles` list for the shared All
-view and result rendering. The combined list is typed as a discriminated union:
+`spaceships`. Because the provided datasets are small and local, it also exposes
+a combined `vehicles` list for querying and rendering the shared All view. That
+keeps the current implementation straightforward without giving up type-specific
+behavior. The combined list is typed as a discriminated union:
 
 ```ts
 type Vehicle = Car | Bike | Spaceship;
@@ -87,9 +89,11 @@ The page owns UI state:
 - selected filters
 - sort option
 
-The query logic lives in `src/lib/getVisibleVehicles.ts`. Every time state changes,
-the app recalculates visible vehicles from the full dataset instead of layering
-stateful intermediate result lists.
+The query logic lives in `src/lib/getVisibleVehicles.ts`. Every time state
+changes, the app recalculates visible vehicles from the full local dataset
+instead of layering stateful intermediate result lists. This keeps
+`VehicleSearchPage` focused on UI state while the query layer decides how the
+result list is built.
 
 Conceptually:
 
@@ -102,8 +106,11 @@ getVisibleVehicles({
 });
 ```
 
-This keeps the frontend behavior predictable and makes the query layer easy to
-replace later if the data source changes.
+This keeps the frontend behavior predictable and leaves room to scale the data
+access later. For example, if the app eventually used separate local lists or
+separate backend endpoints for cars, bikes, and spaceships, that change could be
+handled behind the query layer without making the page component responsible for
+those data-source details.
 
 ## Card Design
 
