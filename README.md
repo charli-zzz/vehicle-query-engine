@@ -6,6 +6,12 @@ behavior: vehicle type tabs, search, sorting, and type-specific custom filters.
 
 ## Getting Started
 
+Try the deployed app:
+
+[https://vehicle-query-engine-mu.vercel.app/](https://vehicle-query-engine-mu.vercel.app/)
+
+Run locally:
+
 Install dependencies:
 
 ```bash
@@ -44,6 +50,11 @@ npm run build
 - TypeScript
 - Tailwind CSS
 - Radix UI Slider
+
+## Browser Support
+
+This project uses Tailwind CSS v4 and targets modern browsers. It is expected to
+work in current versions of Chrome, Safari, Firefox, and Edge. 
 
 ## Project Structure
 
@@ -139,40 +150,25 @@ they use:
 The config is explicit, but the available options and min/max values are derived
 from the dataset.
 
-## Frontend vs Backend Querying
+## Frontend Querying and Scalability
 
-This project intentionally uses local JSON data only. Filtering, searching, and
-sorting stay in the frontend because the dataset is static and small. That
-showcases frontend skills such as controlled inputs, derived state,
-type-specific UI, discriminated unions, and reusable query logic without adding
-unnecessary backend complexity.
+This implementation is a purely frontend, state-controlled query engine. The
+user's selected view, search text, selected filters, and sort option live in
+React state, and `src/lib/getVisibleVehicles.ts` applies those constraints to
+the local JSON data.
 
-At production scale, the same constraints could move to a backend or search
-service. That is not part of this implementation, but the frontend state shape
-would map naturally to an API request:
+That tradeoff fits this project because the provided datasets are small, static,
+and already available locally. Adding a backend would not improve the user
+experience for this scope, and would distract from the frontend state,
+filtering, and rendering work the project is meant to demonstrate.
 
-```txt
-GET /api/vehicles?type=car&search=astro&yearMin=2020&sort=year-desc&page=1
-```
+The query shape still leaves a clear path to scale. If the data later moved
+behind an API, the frontend could send the same constraints as request
+parameters or request body data: vehicle kind, search text, selected filter
+values, range bounds, sort option, and eventually pagination. The backend would
+then apply those constraints against a larger data source and return only the
+matching page of results.
 
-In that production-style version, the backend would handle:
-
-- filtering
-- searching
-- sorting
-- pagination
-- database indexes
-
-The frontend would render the returned page of results instead of filtering the
-entire dataset locally.
-
-Doing filtering and sorting on both frontend and backend is usually avoided for
-the main result list because it can create mismatched totals, broken pagination,
-or inconsistent sort order. A common split is:
-
-- Backend owns global result querying for large datasets.
-- Frontend owns UI state and small presentation-only interactions.
-
-For this project, the frontend query engine is the right tradeoff because the
-goal is to demonstrate client-side application architecture rather than backend
-API design.
+In that larger version, the backend would own heavier concerns like filtering,
+searching, sorting, pagination, and indexing. The frontend would stay focused on
+controls, state, loading/error handling, and result rendering.
