@@ -7,12 +7,10 @@ import {
 import { sortVehicles, type SortOption } from "@/lib/sortConfig";
 import type { Vehicle, VehicleKind } from "@/types/vehicle";
 
-/**
- * Constraints applied to the full local dataset to produce the visible results.
- * Callers pass query constraints, not UI view names; undefined
- * selectedVehicleKind means no kind restriction.
- */
+
 export type VehicleQueryConstraints = {
+  // `selectedVehicleKind` is optional because the All view does not select a
+  //  specific vehicle kind.
   selectedVehicleKind?: VehicleKind;
   searchQuery: string;
   selectedFilters: SelectedFilters;
@@ -30,8 +28,7 @@ function matchesSearchQuery(vehicle: Vehicle, searchQuery: string) {
     return true;
   }
 
-  // Search is intentionally generic rather than config-driven: the contract
-  // requires searching across every attribute for each vehicle.
+  // Search is intentionally generic rather than config-driven
   return Object.values(vehicle).some((value) =>
     String(value).toLowerCase().includes(normalizedSearchQuery),
   );
@@ -69,8 +66,9 @@ function matchesSelectedFilters(vehicle: Vehicle, selectedFilters: SelectedFilte
 }
 
 /**
- * Applies kind, search, custom filters, and sort to the full local dataset.
- * This avoids layering stale intermediate result arrays in React state.
+ * Builds the visible vehicles from the full local dataset every time query
+ * state changes. Kind, search, and custom filters decide which vehicles are
+ * included; sorting is then applied as the final ordering step.
  */
 export function getVisibleVehicles({
   selectedVehicleKind,

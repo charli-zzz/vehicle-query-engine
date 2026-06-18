@@ -4,24 +4,6 @@ Vehicle Query Engine is a Next.js app for browsing a mixed dataset of cars,
 bikes, and spaceships. It focuses on frontend state modeling and query
 behavior: vehicle type tabs, search, sorting, and type-specific custom filters.
 
-## Features
-
-- Browse cars, bikes, and spaceships in one result view.
-- Switch between `All`, `Cars`, `Bikes`, and `Spaceships` result views.
-- Search across all attributes of each vehicle.
-- Sort by model name, newest year, or oldest year.
-- Show custom filters based on the selected vehicle type.
-- Use select filters for discrete values and range sliders for numeric ranges.
-- Keep the filter panel and results list independently scrollable.
-
-## Tech Stack
-
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
-- Radix UI Slider
-
 ## Getting Started
 
 Install dependencies:
@@ -44,6 +26,24 @@ Run checks:
 npm run lint
 npm run build
 ```
+
+## Features
+
+- Browse cars, bikes, and spaceships in one result view.
+- Switch between `All`, `Cars`, `Bikes`, and `Spaceships` result views.
+- Search across all attributes of each vehicle.
+- Sort by model name, newest year, or oldest year.
+- Show custom filters based on the selected vehicle type.
+- Use select filters for discrete values and range sliders for numeric ranges.
+- Keep the filter panel and results list independently scrollable.
+
+## Tech Stack
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- Radix UI Slider
 
 ## Project Structure
 
@@ -104,6 +104,18 @@ getVisibleVehicles({
 
 This keeps the frontend behavior predictable and makes the query layer easy to
 replace later if the data source changes.
+
+## Card Design
+
+The result list uses type-specific cards for cars, bikes, and spaceships instead
+of a single generic card. The datasets share a few fields, but their meaningful
+details differ: cars show attributes like seats, horsepower, and km/h top speed;
+bikes show type, gears, and wheel size; spaceships show crew capacity and format
+top speed as a percentage of light speed.
+
+This keeps the UI readable without forcing all vehicle types into one universal
+display schema, and gives developers freedom to customize the layout,
+formatting, and interactions for each vehicle type independently.
 
 ## Filter Design
 
