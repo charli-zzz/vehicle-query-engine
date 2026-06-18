@@ -13,6 +13,7 @@ import {
 } from "@/lib/vehicleFilters";
 import { getVisibleVehicles } from "@/lib/vehicleQuery";
 import type { SortOption, VehicleTab } from "@/lib/vehicleOptions";
+import Image from "next/image";
 import { useState } from "react";
 
 export function VehicleSearchPage() {
@@ -31,6 +32,7 @@ export function VehicleSearchPage() {
 
   function handleSelectTab(vehicleTab: VehicleTab) {
     setSelectedTab(vehicleTab);
+    // switching tabs should clear specific filters for the previous tab
     setSelectedFilters(createEmptySelectedFilters());
   }
 
@@ -66,9 +68,19 @@ export function VehicleSearchPage() {
       <div className="mx-auto flex h-full max-w-6xl flex-col gap-6">
         <header className="shrink-0 space-y-3">
           <div className="max-w-3xl space-y-3">
-            <h1 className="text-4xl font-semibold tracking-normal text-zinc-950">
-              Vehicle Query Engine
-            </h1>
+            <div className="flex items-center gap-3">
+              <Image
+                alt=""
+                aria-hidden="true"
+                className="h-[72px] w-[72px] rounded-lg object-cover"
+                height={72}
+                src="/icon.png"
+                width={72}
+              />
+              <h1 className="text-4xl font-semibold tracking-normal text-zinc-950">
+                Vehicle Query Engine
+              </h1>
+            </div>
             <p className="text-base leading-7 text-zinc-600">
               Search across cars, bikes, and spaceships, then narrow results with filters
               that adapt to each vehicle type.
